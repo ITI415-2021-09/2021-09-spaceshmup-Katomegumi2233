@@ -27,7 +27,9 @@ public class Hero : MonoBehaviour {
     // Create a WeaponFireDelegate field named fireDelegate.
     public WeaponFireDelegate fireDelegate;
 
-	void Start()
+   // public WeaponFireDelegate fireDelegate_miss;
+
+    void Start()
     {
         if (S == null)
         {
@@ -40,12 +42,22 @@ public class Hero : MonoBehaviour {
         //fireDelegate += TempFire;
 
         // Reset the weapons to start _Hero with 1 blaster
+
+  
         ClearWeapons();
-        weapons[0].SetType(WeaponType.blaster);
+       //  weapons[0].SetType(WeaponType.spread);
+        //  weapons[0].SetType(WeaponType.blaster);
+        // weapons[0].SetType(WeaponType.phaser);
+
+         // weapons[0].SetType(WeaponType.laser);
+
+
+         weapons[0].SetType(WeaponType.missile);
+        // weapons[0].SetType(WeaponType.SwivelGun);
     }
-	
-	// Update is called once per frame
-	void Update()
+
+    // Update is called once per frame
+    void Update()
     {
         // Pull in information from the Input class
         float xAxis = Input.GetAxis("Horizontal");
@@ -65,8 +77,14 @@ public class Hero : MonoBehaviour {
         // Then ensure that fireDelegate isn't null to avoid an error
         if (Input.GetAxis("Jump") == 1 && fireDelegate != null)
         {
+     
             fireDelegate();
         }
+
+
+
+
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -96,6 +114,8 @@ public class Hero : MonoBehaviour {
         {
             print("Triggered by non-Enemy: " + go.name);
         }
+
+      
     }
 
     public void AbsorbPowerUp(GameObject go)

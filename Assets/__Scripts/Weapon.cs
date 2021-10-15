@@ -15,7 +15,8 @@ public enum WeaponType
     phaser, // [NI] Shots that move in waves
     missile, // [NI] Homing missiles
     laser, // [NI] Damage over time
-    shield // Raise shieldLevel
+    shield, // Raise shieldLevel
+    SwivelGun
 }
 
 /// <summary>
@@ -67,6 +68,7 @@ public class Weapon : MonoBehaviour {
         if(rootGO.GetComponent<Hero>() != null)
         {
             rootGO.GetComponent<Hero>().fireDelegate += Fire;
+          //  rootGO.GetComponent<Hero>().fireDelegate_miss += Fire;
         }
     }
 
@@ -122,18 +124,98 @@ public class Weapon : MonoBehaviour {
                 p.rigid.velocity = vel;
                 break;
 
+
+            case WeaponType.SwivelGun:
+                p = MakeProjectile();
+                p.rigid.velocity = vel;
+
+
+            
+
+             
+
+              Vector3  direction1 = find_near_enemy().transform.position - p.transform.position;
+             
+                float angle = 360 - Mathf.Atan2(direction1.x, direction1.y) * Mathf.Rad2Deg;
+           
+          
+
+              
+               p.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+                p.rigid.velocity = p.transform.rotation * vel;
+
+                break;
+
+
+            case WeaponType.missile:
+                p = MakeProjectile();
+              //  p.rigid.velocity = vel;
+                break;
+
+
+            case WeaponType.laser:
+                p = MakeProjectile();
+               // p.rigid.velocity = vel;
+              Vector3 scale = p.transform.localScale;
+                scale.y = -50;
+                p.transform.localScale = scale;
+                break;
+
+            case WeaponType.phaser:
+
+                p = MakeProjectile();
+
+                p.GetComponent<Projectile>().x_pos = 3;
+
+
+
+                p = MakeProjectile();
+
+                p.GetComponent<Projectile>().x_pos = -3;
+
+
+
+
+
+
+
+                break;
+                
+
+
+
+
             case WeaponType.spread:
                 p = MakeProjectile(); // Make middle Projectile
                 p.rigid.velocity = vel;
+
                 p = MakeProjectile(); // Make right Projectile
                 p.transform.rotation = Quaternion.AngleAxis(10, Vector3.back);
                 p.rigid.velocity = p.transform.rotation * vel;
+
+
                 p = MakeProjectile(); // Make left Projectile
                 p.transform.rotation = Quaternion.AngleAxis(-10, Vector3.back);
                 p.rigid.velocity = p.transform.rotation * vel;
+
+
+                p = MakeProjectile(); // Make left Projectile
+                p.transform.rotation = Quaternion.AngleAxis(20, Vector3.back);
+                p.rigid.velocity = p.transform.rotation * vel;
+
+
+                p = MakeProjectile(); // Make left Projectile
+                p.transform.rotation = Quaternion.AngleAxis(-20, Vector3.back);
+                p.rigid.velocity = p.transform.rotation * vel;
+
+
                 break;
         }
     }
+
+
+  
 
     public Projectile MakeProjectile()
     {
@@ -154,5 +236,51 @@ public class Weapon : MonoBehaviour {
         p.type = type;
         lastShotTime = Time.time;
         return p;
+    }
+
+
+
+
+
+
+
+
+    public GameObject  find_near_enemy()
+    {
+        GameObject[] ary = GameObject.FindGameObjectsWithTag("Enemy");
+
+        int index = UnityEngine.Random.Range(0, ary.Length);
+
+        GameObject mingo=null;
+        
+
+        for(int i = 0; i < ary.Length; i++)
+        {
+            if (i == 0)
+            {
+             mingo  =  ary[0];
+            }
+            else
+            {
+
+              GameObject index_go  = ary[i];
+
+              float index_dis = Vector2.Distance(transform.parent.position, index_go.transform.position);
+                float min_dis = Vector2.Distance(transform.parent.position, mingo.transform.position);
+
+                if (min_dis >= index_dis)
+                {
+                    mingo = index_go;
+                }
+
+
+            }
+            
+
+
+        }
+
+
+        return mingo;
     }
 }
